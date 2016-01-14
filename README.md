@@ -7,11 +7,11 @@ Similar to the approach used by [2] Srivastava 2015 ( http://arxiv.org/abs/1502.
 ### Datasets
 Two datasets were used, both 64x64:
 - moving MNIST similar to [2] generated using moving_mnist.py
--screenshots from the movie Pulp Fiction
+- screenshots from the movie Pulp Fiction
 
 ### Approaches
 ####Moving MNIST:
-- autoencode to 32-dimensional latent space using a VAE as in [1] with the difference of having a convolutional layer on both ends to help
+- autoencode to 32-dimensional latent space using a VAE as in [1] with the difference of having a convolutional layer on both the input and output. Example output:
 
 ![image](picture_output/mm_ae_examples/output_2.jpg)
 ![image](picture_output/mm_ae_examples/output_21.jpg)
