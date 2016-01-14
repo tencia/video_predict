@@ -55,6 +55,8 @@ Examples of moving MNIST sampled video:
 ![image](picture_output/mm_vid_examples/sample_121.gif)
 ![image](picture_output/mm_vid_examples/sample_275.gif)
 
+In the above examples, the priming sequence images are the output of the LSTM after reconstruction using the 'decoder' portion of the appropriate autoencoder. So we can see that the LSTM at least learns to approximately reconstruct the input it is given.
+
 ### Future work
 - trying to encode the difference in Z-space, which might present some problems as reconstruction error then becomes additive
 - using mixture density networks as in [3] Graves 2013 ( http://arxiv.org/abs/1308.0850 )
