@@ -17,6 +17,8 @@ Two datasets were used, both 64x64:
 ![image](picture_output/mm_ae_examples/output_21.jpg)
 ![image](picture_output/mm_ae_examples/output_22.jpg)
 ![image](picture_output/mm_ae_examples/output_29.jpg)
+![image](picture_output/mm_ae_examples/output_27.jpg)
+![image](picture_output/mm_ae_examples/output_24.jpg)
 
 ####Pulp Fiction
 - training a single autoencoder as above did not work; it never learned to reconstruct beyond light/dark patches
@@ -26,11 +28,11 @@ Two datasets were used, both 64x64:
 - so the encoding/decoding steps are: image -> conv_feats -> Z -> conv_feats_reconstructed -> image_reconstructed. Example outputs:
 
 ![image](picture_output/pf_ae_examples/output_301.jpg)
+![image](picture_output/pf_ae_examples/output_339.jpg)
 ![image](picture_output/pf_ae_examples/output_321.jpg)
+![image](picture_output/pf_ae_examples/output_351.jpg)
 ![image](picture_output/pf_ae_examples/output_323.jpg)
 ![image](picture_output/pf_ae_examples/output_328.jpg)
-![image](picture_output/pf_ae_examples/output_339.jpg)
-![image](picture_output/pf_ae_examples/output_351.jpg)
 
 ####Video prediction for both datasets:
 - PF used a frame skip rate of 3 (so a sequence would be every third frame). MNIST used every frame.
