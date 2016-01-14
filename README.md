@@ -2,7 +2,7 @@
 
 Trains a combination of a variational autoencoder [1] Kingma 2014 ( http://arxiv.org/abs/1312.6114 ) and LSTM to predict video frames from a sequence of previous frames.
 
-Similar to the approach used by [2] Srivastava 2015 ( http://arxiv.org/abs/1502.04681 ), a sequence of processed image data was used as the input to an LSTM, which was then trained to predict the next frame. The two major differences are that this uses the encoded values Z found by the autoencoder, rather than flattened image data or convolutional percepts, and that one LSTM is used for prediction rather than a separate encoder and decoder.
+Similar to the approach used by [2] Srivastava 2015 ( http://arxiv.org/abs/1502.04681 ), a sequence of processed image data was used as the input to an LSTM, which was then trained to predict the next frame. The two major differences are that this uses the latent variables Z found by the autoencoder, rather than flattened image data or convolutional percepts, and that one LSTM is used for prediction rather than a separate encoder and decoder.
 
 ### Datasets
 Two datasets were used, both 64x64:
