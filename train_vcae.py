@@ -6,6 +6,7 @@ import theano.tensor as T
 import lasagne as nn
 
 import utils as u
+import config as c
 import models as m
 
 # 01/03/2016
@@ -14,7 +15,7 @@ import models as m
 # natural images
 
 def main(L=2, img_size=64, pxsh=0., z_dim=32, n_hid=1024, num_epochs=12, binary='True',
-        init_from='', data_file='', batch_size=128, save_to='params'):
+        init_from='', data_file='', batch_size=128, save_to='params', max_per_epoch=-1):
     binary = binary.lower()=='true'
 
     # Create VAE model
@@ -42,6 +43,7 @@ def main(L=2, img_size=64, pxsh=0., z_dim=32, n_hid=1024, num_epochs=12, binary=
     print('training for {} epochs'.format(num_epochs))
     data = u.DataH5PyStreamer(data_file, batch_size=batch_size)
     hist = u.train_with_hdf5(data, num_epochs=num_epochs, train_fn=train_fn, test_fn=val_fn,
+            max_per_epoch=max_per_epoch,
             tr_transform=lambda x: u.raw_to_floatX(x[0], pixel_shift=pxsh, center=False),
             te_transform=lambda x: u.raw_to_floatX(x[0], pixel_shift=pxsh, center=True))
 

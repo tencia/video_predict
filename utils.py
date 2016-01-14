@@ -80,11 +80,14 @@ def raw_to_floatX(imb, pixel_shift=0.5, square=True, center=False, rng=None):
     return nn.utils.floatX(imb)[:,:,x:x+w,y:y+h]/ 255. - pixel_shift
 
 # creates and hdf5 file from a dataset given a split in the form {'train':(0,n)}, etc
-def save_hd5py(dataset, destfile, indices_dict):
+# appears to save in unpredictable order, so order must be verified after creation
+def save_hd5py(dataset_dict, destfile, indices_dict):
     f = h5py.File(destfile, mode='w')
-    images = f.create_dataset('images', dataset.shape, dtype='uint8')
-    images[...] = dataset
-    split_dict = dict((k, {'images':v}) for k,v in indices_dict.iteritems())
+    for name, dataset in dataset_dict.iteritems():
+        dat = f.create_dataset(name, dataset.shape, dtype=str(dataset.dtype))
+        dat[...] = dataset
+    split_dict = dict((k, dict((name, v) for name in dataset_dict.iterkeys()))
+            for k,v in indices_dict.iteritems())
     f.attrs['split'] = H5PYDataset.create_split_array(split_dict)
     f.flush()
     f.close()
@@ -131,12 +134,19 @@ def get_image_pair(X, Xpr,index=-1,shift=0.5):
     new_im.paste(rec_image, (0,original_image.size[1]))
     return new_im
 
+# gets array (in format used for storage) from an Image
+def arr_from_img_storage(im):
+    w,h=im.size
+    arr=np.asarray(im.getdata(), dtype=np.uint8)
+    c = np.product(arr.size) / (w*h)
+    return arr.reshape(h,w,c).transpose(2,1,0)
+
 # gets array (in format used for testing) from an Image
 def arr_from_img(im,shift=0.5):
     w,h=im.size
-    arr=im.getdata()
+    arr=np.asarray(im.getdata(), dtype=theano.config.floatX)
     c = np.product(arr.size) / (w*h)
-    return np.asarray(arr, dtype=np.float32).reshape((h,w,c)).transpose(2,1,0) / 255. - shift
+    return arr.reshape((h,w,c)).transpose(2,1,0) / 255. - shift
 
 # loads params in npz (if filename is a .npz) or pickle if not
 def load_params(model, fn):

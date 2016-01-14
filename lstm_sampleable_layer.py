@@ -7,6 +7,9 @@ from lasagne.layers import LSTMLayer
 from lasagne.layers import Gate
 from lasagne.layers import Layer
 
+# extension of lasagne.layers.LSTMLayer that directly re-implements get_output_for
+# with the modification that it returns both cell and hidden state
+
 class LSTMSampleableLayer(LSTMLayer):
     def __init__(self, *args, **kwargs):
         super(LSTMSampleableLayer, self).__init__(*args, **kwargs)

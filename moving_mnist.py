@@ -59,10 +59,12 @@ def generate_moving_mnist(shape=(64,64), seq_len=30, seqs=10000, num_sz=28, nums
         direcs = np.pi * (np.random.rand(nums_per_image)*2 - 1)
         speeds = np.random.randint(5, size=nums_per_image)+2
         veloc = [(v*math.cos(d), v*math.sin(d)) for d,v in zip(direcs, speeds)]
-        mnist_images = [Image.fromarray(get_picture_array(mnist,r,shift=0)).resize((num_sz,num_sz), Image.ANTIALIAS) \
+        mnist_images = [Image.fromarray(get_picture_array(mnist,r,shift=0))\
+                .resize((num_sz,num_sz), Image.ANTIALIAS) \
                for r in np.random.randint(0, mnist.shape[0], nums_per_image)]
-        positions = [(np.random.rand()*x_lim, np.random.rand()*y_lim) for _ in xrange(nums_per_image)]
-        for frame_idx in xrange(30):
+        positions = [(np.random.rand()*x_lim, np.random.rand()*y_lim)
+                for _ in xrange(nums_per_image)]
+        for frame_idx in xrange(seq_len):
             canvases = [Image.new('L', (width,height)) for _ in xrange(nums_per_image)]
             canvas = np.zeros((1,width,height), dtype=np.float32)
             for i,canv in enumerate(canvases):
@@ -78,7 +80,8 @@ def generate_moving_mnist(shape=(64,64), seq_len=30, seqs=10000, num_sz=28, nums
             for i, pos in enumerate(next_pos):
                 for j, coord in enumerate(pos):
                     if coord < -2 or coord > lims[j]+2:
-                        veloc[i] = tuple(list(veloc[i][:j]) + [-1 * veloc[i][j]] + list(veloc[i][j+1:]))
+                        veloc[i] = tuple(list(veloc[i][:j]) + [-1 * veloc[i][j]] +
+                                list(veloc[i][j+1:]))
             positions = [map(sum, zip(p,v)) for p,v in zip(positions, veloc)]
             # copy additive canvas to data array
             dataset[seq_idx*seq_len+frame_idx] = (canvas * 255).astype(np.uint8).clip(0,255)
@@ -105,7 +108,8 @@ def main(dest, filetype='npz', frame_size=64, seq_len=30, seqs=100, num_sz=28, n
         np.savez(dest, dat)
     elif filetype == 'jpg':
         for i in xrange(dat.shape[0]):
-            Image.fromarray(get_picture_array(dat, i, shift=0)).save(os.path.join(dest, '{}.jpg'.format(i)))
+            Image.fromarray(get_picture_array(dat, i, shift=0))\
+                    .save(os.path.join(dest, '{}.jpg'.format(i)))
 
 if __name__ == '__main__':
     import argparse
