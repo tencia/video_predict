@@ -24,6 +24,7 @@ Two datasets were used, both 64x64:
 - used a VAE as in [1] to encode the extracted features into a 256-dimensional latent space
 - trained a "deconvoluter" network to reconstruct the original image given the convolutional features
 - so the encoding/decoding steps are: image -> conv_feats -> Z -> conv_feats_reconstructed -> image_reconstructed
+
 ####Video prediction for both datasets:
 - PF used a frame skip rate of 3 (so a sequence would be every third frame). MNIST used every frame.
 - LSTMs were trained using either MSE loss on Z and Kullback-Leibler divergence on mean/stdev of Z as output by the autoencoder. Neither approach predicts video very well; both seem to find 'attractor' states and spirals everything towards those states very quickly.
