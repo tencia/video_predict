@@ -11,7 +11,7 @@ Two datasets were used, both 64x64:
 
 ### Approaches
 ####Moving MNIST:
-- autoencode to 32-dimensional latent space using a VAE as in [1] with the difference of having a convolutional layer on both the input and output. ( train_vcae.py ) Example output:
+- autoencode to 32-dimensional latent space using a VAE as in [1] with the difference of having a convolutional layer on both the input and output. ( train_vcae.py ) Example outputs, originals on top and reconstructions on the bottom:
 
 ![image](picture_output/mm_ae_examples/output_2.jpg)
 ![image](picture_output/mm_ae_examples/output_21.jpg)
@@ -23,7 +23,7 @@ Two datasets were used, both 64x64:
 - instead, trained a convolutional autoencoder using MSE reconstruction loss and used its convolutional layers as a feature extractor ( train_cae.py )
 - used a VAE as in [1] to encode the extracted features into a 256-dimensional latent space ( train_vae_on_convs.py )
 - trained a "deconvoluter" network to reconstruct the original image given the convolutional features ( train_deconv.py )
-- so the encoding/decoding steps are: image -> conv_feats -> Z -> conv_feats_reconstructed -> image_reconstructed
+- so the encoding/decoding steps are: image -> conv_feats -> Z -> conv_feats_reconstructed -> image_reconstructed. Example outputs:
 
 ![image](picture_output/pf_ae_examples/output_301.jpg)
 ![image](picture_output/pf_ae_examples/output_321.jpg)
@@ -34,7 +34,8 @@ Two datasets were used, both 64x64:
 
 ####Video prediction for both datasets:
 - PF used a frame skip rate of 3 (so a sequence would be every third frame). MNIST used every frame.
-- LSTMs were trained using either MSE loss on Z and Kullback-Leibler divergence on mean/stdev of Z as output by the autoencoder. Neither approach predicts video very well; both seem to find 'attractor' states and spirals everything towards those states very quickly.
+- LSTMs were trained using either MSE loss on Z and Kullback-Leibler divergence on mean/stdev of Z as output by the autoencoder.
+- Neither approach predicts video very well; both suffer from noisy output even during the priming sequence and thus performance degrades very quickly (within 2-3 frames) when using the LSTM as a generator.
 
 Examples of Pulp Fiction sampled video sequences - 30 frames of reconstruction from the priming sequence followed by 30 frames of feeding LSTM output into its input:
 
