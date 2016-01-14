@@ -47,12 +47,12 @@ Examples of Pulp Fiction sampled video sequences - 30 frames of reconstruction f
 
 Examples of moving MNIST sampled video:
 
-![image](picture_output/pf_vid_examples/sample_22.gif)
-![image](picture_output/pf_vid_examples/sample_66.gif)
-![image](picture_output/pf_vid_examples/sample_99.gif)
-![image](picture_output/pf_vid_examples/sample_110.gif)
-![image](picture_output/pf_vid_examples/sample_121.gif)
-![image](picture_output/pf_vid_examples/sample_275.gif)
+![image](picture_output/mm_vid_examples/sample_22.gif)
+![image](picture_output/mm_vid_examples/sample_66.gif)
+![image](picture_output/mm_vid_examples/sample_99.gif)
+![image](picture_output/mm_vid_examples/sample_110.gif)
+![image](picture_output/mm_vid_examples/sample_121.gif)
+![image](picture_output/mm_vid_examples/sample_275.gif)
 
 ### Future work
 - trying to encode the difference in Z-space, which might present some problems as reconstruction error then becomes additive
