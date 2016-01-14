@@ -17,7 +17,7 @@ def main(save_to='params',
          seq_length = 30,
          num_epochs=1,
          lstm_n_hid=1024,
-         max_per_epoch=3
+         max_per_epoch=-1
         ):
     kl_loss = kl_loss.lower() == 'true'
     diffs = diffs.lower() == 'true'
@@ -120,9 +120,11 @@ def main(save_to='params',
     if dataset == 'pf':
         z_from_img = lambda x: zenc(convs_from_img(x))
         z_ls_from_img = lambda x: zenc_ls(convs_from_img(x))
+        img_from_z = lambda z: img_from_convs(zdec(z))
     elif dataset == 'mm':
         z_from_img = zenc
         z_ls_from_img = zenc_ls
+        img_from_z = zdec
 
     # training loop
     print('training for {} epochs'.format(num_epochs))
@@ -195,56 +197,54 @@ def main(save_to='params',
     from images2gif import writeGif
     from PIL import Image
 
-    if dataset == 'pf':
-        img_from_z = lambda z: img_from_convs(zdec(z))
-    elif dataset == 'mm':
-        img_from_z = zdec
-
-    te_stream = data.streamer(shuffled=True)
-    imb, = next(te_stream.get_epoch_iterator())
-    z_tup = transform_data(imb, center=True)
-    if kl_loss:
-        z_in, z_ls_in = z_tup[0], z_tup[1]
-        segment_idx = np.random.randint(z_in.shape[0])
-        z_last, z_ls_last = z_in[segment_idx:segment_idx+1], z_ls_in[segment_idx:segment_idx+1]
-        z_vars = [z_last, z_ls_last]
-    else:
-        z_in = z_tup[0]
-        segment_idx = np.random.randint(z_in.shape[0])
-        z_last = z_in[segment_idx:segment_idx+1]
-        z_vars = [z_last]
-    images = []
-    state_values = [np.dot(np.ones((z_last.shape[0],1), dtype=theano.config.floatX), s)
-            for s in init_values]
-    output_list = sample_fn(*(z_vars + state_values))
-
-    # use whole sequence of predictions for output
-    z_pred = output_list[0]
-    state_values = output_list[2 if kl_loss else 1:]
-
-    rec = img_from_z(z_pred.reshape(-1, z_dim))
-    for k in xrange(rec.shape[0]):
-        images.append(Image.fromarray(u.get_picture_array(rec, index=k, shift=pixel_shift)))
-    k += 1
-    # slice prediction to feed into lstm
-    z_pred = z_pred[:,-1:,:]
-    if kl_loss:
-        z_ls_pred = output_list[1][:,-1:,:]
-        z_vars = [z_pred, z_ls_pred]
-    else:
-        z_vars = [z_pred]
-    for i in xrange(30): # predict 30 frames after the end of the priming video
+    # sample approximately 30 different generated video sequences
+    te_stream = data.streamer(training=True, shuffled=False)
+    interval = data.ntrain / data.batch_size / 30
+    for idx,imb in enumerate(te_stream.get_epoch_iterator()):
+        if idx % interval != 0:
+            continue
+        z_tup = transform_data(imb[0], center=True)
+        seg_idx = np.random.randint(z_tup[0].shape[0])
+        if kl_loss:
+            z_in, z_ls_in = z_tup[0], z_tup[1]
+            z_last, z_ls_last = z_in[seg_idx:seg_idx+1], z_ls_in[seg_idx:seg_idx+1]
+            z_vars = [z_last, z_ls_last]
+        else:
+            z_in = z_tup[0]
+            z_last = z_in[seg_idx:seg_idx+1]
+            z_vars = [z_last]
+        images = []
+        state_values = [np.dot(np.ones((z_last.shape[0],1), dtype=theano.config.floatX), s)
+                for s in init_values]
         output_list = sample_fn(*(z_vars + state_values))
+
+        # use whole sequence of predictions for output
         z_pred = output_list[0]
         state_values = output_list[2 if kl_loss else 1:]
+
         rec = img_from_z(z_pred.reshape(-1, z_dim))
-        images.append(Image.fromarray(u.get_picture_array(rec, index=0, shift=pixel_shift)))
+        for k in xrange(rec.shape[0]):
+            images.append(Image.fromarray(u.get_picture_array(rec, index=k, shift=pixel_shift)))
+        k += 1
+        # slice prediction to feed into lstm
+        z_pred = z_pred[:,-1:,:]
         if kl_loss:
-            z_ls_pred = output_list[1]
+            z_ls_pred = output_list[1][:,-1:,:]
             z_vars = [z_pred, z_ls_pred]
         else:
             z_vars = [z_pred]
-    writeGif("sample.gif",images,duration=0.1,dither=0)
+        for i in xrange(30): # predict 30 frames after the end of the priming video
+            output_list = sample_fn(*(z_vars + state_values))
+            z_pred = output_list[0]
+            state_values = output_list[2 if kl_loss else 1:]
+            rec = img_from_z(z_pred.reshape(-1, z_dim))
+            images.append(Image.fromarray(u.get_picture_array(rec, index=0, shift=pixel_shift)))
+            if kl_loss:
+                z_ls_pred = output_list[1]
+                z_vars = [z_pred, z_ls_pred]
+            else:
+                z_vars = [z_pred]
+        writeGif("sample_{}.gif".format(idx),images,duration=0.1,dither=0)
 
 if __name__ == '__main__':
     # make all arguments of main(...) command line arguments (with type inferred from

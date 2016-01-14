@@ -25,9 +25,34 @@ Two datasets were used, both 64x64:
 - trained a "deconvoluter" network to reconstruct the original image given the convolutional features ( train_deconv.py )
 - so the encoding/decoding steps are: image -> conv_feats -> Z -> conv_feats_reconstructed -> image_reconstructed
 
+![image](picture_output/pf_ae_examples/output_301.jpg)
+![image](picture_output/pf_ae_examples/output_321.jpg)
+![image](picture_output/pf_ae_examples/output_323.jpg)
+![image](picture_output/pf_ae_examples/output_328.jpg)
+![image](picture_output/pf_ae_examples/output_339.jpg)
+![image](picture_output/pf_ae_examples/output_351.jpg)
+
 ####Video prediction for both datasets:
 - PF used a frame skip rate of 3 (so a sequence would be every third frame). MNIST used every frame.
 - LSTMs were trained using either MSE loss on Z and Kullback-Leibler divergence on mean/stdev of Z as output by the autoencoder. Neither approach predicts video very well; both seem to find 'attractor' states and spirals everything towards those states very quickly.
+
+Examples of Pulp Fiction sampled video sequences - 30 frames of reconstruction from the priming sequence followed by 30 frames of feeding LSTM output into its input:
+
+![image](picture_output/pf_vid_examples/sample_51.gif)
+![image](picture_output/pf_vid_examples/sample_102.gif)
+![image](picture_output/pf_vid_examples/sample_136.gif)
+![image](picture_output/pf_vid_examples/sample_170.gif)
+![image](picture_output/pf_vid_examples/sample_187.gif)
+![image](picture_output/pf_vid_examples/sample_459.gif)
+
+Examples of moving MNIST sampled video:
+
+![image](picture_output/pf_vid_examples/sample_22.gif)
+![image](picture_output/pf_vid_examples/sample_66.gif)
+![image](picture_output/pf_vid_examples/sample_99.gif)
+![image](picture_output/pf_vid_examples/sample_110.gif)
+![image](picture_output/pf_vid_examples/sample_121.gif)
+![image](picture_output/pf_vid_examples/sample_275.gif)
 
 ### Future work
 - trying to encode the difference in Z-space, which might present some problems as reconstruction error then becomes additive
