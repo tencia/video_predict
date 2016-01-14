@@ -11,7 +11,7 @@ Two datasets were used, both 64x64:
 
 ### Approaches
 ####Moving MNIST:
-- autoencode to 32-dimensional latent space using a VAE as in [1] with the difference of having a convolutional layer on both the input and output. Example output:
+- autoencode to 32-dimensional latent space using a VAE as in [1] with the difference of having a convolutional layer on both the input and output. ( train_vcae.py ) Example output:
 
 ![image](picture_output/mm_ae_examples/output_2.jpg)
 ![image](picture_output/mm_ae_examples/output_21.jpg)
@@ -20,9 +20,9 @@ Two datasets were used, both 64x64:
 
 ####Pulp Fiction
 - training a single autoencoder as above did not work; it never learned to reconstruct beyond light/dark patches
-- instead, trained a convolutional autoencoder using MSE reconstruction loss and used its convolutional layers as a feature extractor
-- used a VAE as in [1] to encode the extracted features into a 256-dimensional latent space
-- trained a "deconvoluter" network to reconstruct the original image given the convolutional features
+- instead, trained a convolutional autoencoder using MSE reconstruction loss and used its convolutional layers as a feature extractor ( train_cae.py )
+- used a VAE as in [1] to encode the extracted features into a 256-dimensional latent space ( train_vae_on_convs.py )
+- trained a "deconvoluter" network to reconstruct the original image given the convolutional features ( train_deconv.py )
 - so the encoding/decoding steps are: image -> conv_feats -> Z -> conv_feats_reconstructed -> image_reconstructed
 
 ####Video prediction for both datasets:
