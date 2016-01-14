@@ -12,10 +12,12 @@ Two datasets were used, both 64x64:
 ### Approaches
 ####Moving MNIST:
 - autoencode to 32-dimensional latent space using a VAE as in [1] with the difference of having a convolutional layer on both ends to help
-![ ](picture_output/mm_ae_examples/output_2.jpg)
-![ ](picture_output/mm_ae_examples/output_21.jpg)
-![ ](picture_output/mm_ae_examples/output_22.jpg)
-![ ](picture_output/mm_ae_examples/output_29.jpg)
+
+![image](picture_output/mm_ae_examples/output_2.jpg)
+![image](picture_output/mm_ae_examples/output_21.jpg)
+![image](picture_output/mm_ae_examples/output_22.jpg)
+![image](picture_output/mm_ae_examples/output_29.jpg)
+
 ####Pulp Fiction
 - training a single autoencoder as above did not work; it never learned to reconstruct beyond light/dark patches
 - instead, trained a convolutional autoencoder using MSE reconstruction loss and used its convolutional layers as a feature extractor
