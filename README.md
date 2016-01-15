@@ -1,8 +1,8 @@
 # LSTM sequence modeling of video data
 
-Trains a combination of a variational autoencoder [1] Kingma 2014 ( http://arxiv.org/abs/1312.6114 ) and LSTM to predict video frames from a sequence of previous frames.
+Trains a combination of a variational autoencoder [1] [Kingma et al 2014] (http://arxiv.org/abs/1312.6114) and LSTM to predict video frames from a sequence of previous frames.
 
-Similar to the approach used by [2] Srivastava 2015 ( http://arxiv.org/abs/1502.04681 ), a sequence of processed image data was used as the input to an LSTM, which was then trained to predict the next frame. The two major differences are that this uses the latent variables Z found by the autoencoder, rather than flattened image data or convolutional percepts, and that one LSTM is used for prediction rather than a separate encoder and decoder.
+Similar to the approach used by [2] [Srivastava et al 2015] (http://arxiv.org/abs/1502.04681), a sequence of processed image data was used as the input to an LSTM, which was then trained to predict the next frame. The two major differences are that this uses the latent variables Z found by the autoencoder, rather than flattened image data or convolutional percepts, and that one LSTM is used for prediction rather than a separate encoder and decoder.
 
 ### Datasets
 Two datasets were used, both 64x64:
@@ -11,7 +11,7 @@ Two datasets were used, both 64x64:
 
 ### Approaches
 ####Moving MNIST:
-- autoencode to 32-dimensional latent space using a VAE as in [1] with the difference of having a convolutional layer on both the input and output. ( train_vcae.py ) Example outputs, originals on top and reconstructions on the bottom:
+- `train_vcae.py`: autoencode to 32-dimensional latent space using a VAE as in [1] with the difference of having a convolutional layer on both the input and output. Example outputs, originals on top and reconstructions on the bottom:
 
 ![image](picture_output/mm_ae_examples/output_2.jpg)
 ![image](picture_output/mm_ae_examples/output_21.jpg)
@@ -22,9 +22,9 @@ Two datasets were used, both 64x64:
 
 ####Pulp Fiction
 - training a single autoencoder as above did not work; it never learned to reconstruct beyond light/dark patches
-- instead, trained a convolutional autoencoder using MSE reconstruction loss and used its convolutional layers as a feature extractor ( train_cae.py )
-- used a VAE as in [1] to encode the extracted features into a 256-dimensional latent space ( train_vae_on_convs.py )
-- trained a "deconvoluter" network to reconstruct the original image given the convolutional features ( train_deconv.py )
+- `train_cae.py`: instead, trained a convolutional autoencoder using MSE reconstruction loss and used its convolutional layers as a feature extractor
+- `train_vae_on_convs.py`: used a VAE as in [1] to encode the extracted features into a 256-dimensional latent space
+- `train_deconv.py`: trained a "deconvoluter" network to reconstruct the original image given the convolutional features
 - so the encoding/decoding steps are: image -> conv_feats -> Z -> conv_feats_reconstructed -> image_reconstructed. Example outputs:
 
 ![image](picture_output/pf_ae_examples/output_301.jpg)
@@ -61,7 +61,7 @@ In the above examples, the priming sequence images are the output of the LSTM af
 
 ### Future work
 - trying to encode the difference in Z-space, which might present some problems as reconstruction error then becomes additive
-- using mixture density networks as in [3] Graves 2013 ( http://arxiv.org/abs/1308.0850 )
+- using mixture density networks as in [3] [Graves 2013] (http://arxiv.org/abs/1308.0850)
 
 ### Dependencies
 - lasagne (current master)
