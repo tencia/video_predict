@@ -36,7 +36,7 @@ Two datasets were used, both 64x64 pixels:
 
 ####Video prediction for both datasets:
 - PF used a frame skip rate of 3 (so a sequence would be every third frame). MNIST used every frame.
-- LSTMs were trained using either MSE loss on Z and Kullback-Leibler divergence on mean/stdev of Z as output by the autoencoder.
+- LSTMs were trained using either MSE loss on Z or Kullback-Leibler divergence on mean/stdev of Z as output by the autoencoder.
 - Neither approach predicts video very well; both suffer from noisy output even during the priming sequence and thus performance degrades very quickly (within 2-3 frames) when using the LSTM as a generator.
 
 Examples of Pulp Fiction sampled video sequences - 30 frames of reconstruction from the priming sequence followed by 30 frames of feeding LSTM output into its input:
@@ -60,7 +60,7 @@ Examples of moving MNIST sampled video:
 In the above examples, the priming sequence images are the output of the LSTM after reconstruction using the 'decoder' portion of the appropriate autoencoder. So we can see that the LSTM at least learns to approximately reconstruct the input it is given.
 
 ### Future work
-- trying to encode the difference in Z-space, which might present some problems as reconstruction error then becomes additive
+- encoding sequences of differences, or relative movement, in Z-space, which might present some problems as reconstruction error then becomes additive
 - using mixture density networks as in [3] [Graves 2013] (http://arxiv.org/abs/1308.0850)
 
 ### Dependencies
