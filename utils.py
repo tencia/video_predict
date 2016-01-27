@@ -20,11 +20,15 @@ def train_with_hdf5(data, num_epochs, train_fn, test_fn,
         tr_transform = lambda x:x,
         te_transform = lambda x:x,
         verbose=True, train_shuffle=True,
+        save_best_params_to=None,
+        last_layer=None,
         max_per_epoch=-1):
     tr_stream = data.streamer(training=True, shuffled=train_shuffle)
     te_stream = data.streamer(training=False, shuffled=False)
     from tqdm import tqdm
     ret = []
+    mve_params = None
+    mve = None
     for epoch in range(num_epochs):
         start = time.time()
         tr_err, tr_batches = 0,0
@@ -51,10 +55,16 @@ def train_with_hdf5(data, num_epochs, train_fn, test_fn,
                 break
         val_err /= val_batches
         tr_err /= tr_batches
+        if save_best_params_to is not None:
+            if mve is None or val_err < mve:
+                mve = val_err
+                mve_params = nn.layers.get_all_param_values(last_layer)
         if verbose:
             print('ep {}/{} - tl {:.5f} - vl {:.5f} - t {:.3f}s'.format(
                 epoch, num_epochs, tr_err, val_err, time.time()-start))
         ret.append((tr_err, val_err))
+    if save_best_params_to is not None:
+        save_params(mve_params, save_best_params_to)
     return ret
 
 # goes from raw image array (usually uint8) to floatX, square=True crops to
@@ -162,11 +172,15 @@ def load_params(model, fn):
 # saves params in npz (if filename is a .npz) or pickle if not
 def save_params(model, fn):
     if 'npz' in fn:
-        np.savez(fn, *nn.layers.get_all_param_values(model))
+        if isinstance(model, list):
+            param_vals = model
+        else:
+            param_vals = nn.layers.get_all_param_values(model)
+        np.savez(fn, *param_vals)
     else:
         with open(fn, 'w') as wr:
             import pickle
-            pickle.dump(nn.layers.get_all_param_values(model), wr)
+            pickle.dump(param_vals, wr)
 
 # reset shared variable values of accumulators to recover from NaN
 def reset_accs(updates, params):
