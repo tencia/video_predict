@@ -15,7 +15,7 @@ import numpy as np
 def arr_from_img(im,shift=0):
     w,h=im.size
     arr=im.getdata()
-    c = np.product(arr.size) / (w*h)
+    c = int(np.product(arr.size) / (w*h))
     return np.asarray(arr, dtype=np.float32).reshape((h,w,c)).transpose(2,1,0) / 255. - shift
 
 def get_picture_array(X, index, shift=0):
@@ -52,9 +52,9 @@ def generate_moving_mnist(shape=(64,64), seq_len=30, seqs=10000, num_sz=28, nums
     dataset = np.empty((seq_len*seqs, 1, width, height), dtype=np.uint8)
     minpos = 100
     maxpos = 0
-    for seq_idx in xrange(seqs):
+    for seq_idx in range(seqs):
         if seq_idx % 1000 == 0:
-            print seq_idx
+            print(seq_idx)
         # randomly generate direc/speed/position, calculate velocity vector
         direcs = np.pi * (np.random.rand(nums_per_image)*2 - 1)
         speeds = np.random.randint(5, size=nums_per_image)+2
@@ -63,9 +63,9 @@ def generate_moving_mnist(shape=(64,64), seq_len=30, seqs=10000, num_sz=28, nums
                 .resize((num_sz,num_sz), Image.ANTIALIAS) \
                for r in np.random.randint(0, mnist.shape[0], nums_per_image)]
         positions = [(np.random.rand()*x_lim, np.random.rand()*y_lim)
-                for _ in xrange(nums_per_image)]
-        for frame_idx in xrange(seq_len):
-            canvases = [Image.new('L', (width,height)) for _ in xrange(nums_per_image)]
+                for _ in range(nums_per_image)]
+        for frame_idx in range(seq_len):
+            canvases = [Image.new('L', (width,height)) for _ in range(nums_per_image)]
             canvas = np.zeros((1,width,height), dtype=np.float32)
             for i,canv in enumerate(canvases):
                 canv.paste(mnist_images[i], tuple(map(lambda p: int(round(p)), positions[i])))
@@ -82,7 +82,7 @@ def generate_moving_mnist(shape=(64,64), seq_len=30, seqs=10000, num_sz=28, nums
                     if coord < -2 or coord > lims[j]+2:
                         veloc[i] = tuple(list(veloc[i][:j]) + [-1 * veloc[i][j]] +
                                 list(veloc[i][j+1:]))
-            positions = [map(sum, zip(p,v)) for p,v in zip(positions, veloc)]
+            positions = [tuple(map(sum, zip(p,v))) for p,v in zip(positions, veloc)]
             # copy additive canvas to data array
             dataset[seq_idx*seq_len+frame_idx] = (canvas * 255).astype(np.uint8).clip(0,255)
     return dataset
@@ -107,7 +107,7 @@ def main(dest, filetype='npz', frame_size=64, seq_len=30, seqs=100, num_sz=28, n
     elif filetype == 'npz':
         np.savez(dest, dat)
     elif filetype == 'jpg':
-        for i in xrange(dat.shape[0]):
+        for i in range(dat.shape[0]):
             Image.fromarray(get_picture_array(dat, i, shift=0))\
                     .save(os.path.join(dest, '{}.jpg'.format(i)))
 
